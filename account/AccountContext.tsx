@@ -1,6 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
 import { createContext } from "react";
-import nacl from "tweetnacl";
 
 interface Account {
   address: string;

@@ -1,3 +1,5 @@
+import "react-native-get-random-values";
+import "react-native-url-polyfill/auto";
 import * as SecureStore from "expo-secure-store";
 import nacl from "tweetnacl";
 
@@ -18,8 +20,8 @@ const getKey = async () => {
     const dappPublicKey = await SecureStore.getItemAsync(publicKey);
     const dappSecretKey = await SecureStore.getItemAsync(secretKey);
     return {
-      publicKey: Buffer.from(dappPublicKey as string),
-      secretKey: Buffer.from(dappSecretKey as string),
+      publicKey: Uint8Array.from(dappPublicKey?.split(",").map(val => parseInt(val)) as number[]),
+      secretKey: Uint8Array.from(dappSecretKey?.split(",").map(val => parseInt(val)) as number[]),
     };
   } catch (error) {
     console.log(error);

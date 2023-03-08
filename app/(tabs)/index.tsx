@@ -4,9 +4,10 @@ import Btn from "../../components/Btn";
 import EditScreenInfo from "../../components/EditScreenInfo";
 import { Text, View } from "../../components/Themed";
 import walletApi from "../../api/wallet";
+import { PublicKey } from "@solana/web3.js";
 
 export default function TabOneScreen() {
-  console.log(useAccount());
+  const { phantomWalletPublicKey, session, sharedSecret } = useAccount();
   const {
     disconnect,
     signAndSendTransaction,
@@ -14,7 +15,7 @@ export default function TabOneScreen() {
     signTransaction,
     signMessage,
   } = walletApi;
-  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One</Text>
@@ -25,14 +26,48 @@ export default function TabOneScreen() {
       />
       <EditScreenInfo path="app/(tabs)/index.tsx" />
       <View style={{ flex: 0, paddingTop: 20, paddingBottom: 40 }}>
-        <Btn title="Disconnect" onPress={disconnect} />
+        <Btn
+          title="Disconnect"
+          onPress={() =>
+            disconnect(session as string, sharedSecret as Uint8Array)
+          }
+        />
         <Btn
           title="Sign And Send Transaction"
-          onPress={signAndSendTransaction}
+          onPress={() =>
+            signAndSendTransaction(
+              phantomWalletPublicKey as PublicKey,
+              session as string,
+              sharedSecret as Uint8Array
+            )
+          }
         />
-        <Btn title="Sign All Transactions" onPress={signAllTransactions} />
-        <Btn title="Sign Transaction" onPress={signTransaction} />
-        <Btn title="Sign Message" onPress={signMessage} />
+        <Btn
+          title="Sign All Transactions"
+          onPress={() =>
+            signAllTransactions(
+              phantomWalletPublicKey as PublicKey,
+              session as string,
+              sharedSecret as Uint8Array
+            )
+          }
+        />
+        <Btn
+          title="Sign Transaction"
+          onPress={() =>
+            signTransaction(
+              phantomWalletPublicKey as PublicKey,
+              session as string,
+              sharedSecret as Uint8Array
+            )
+          }
+        />
+        <Btn
+          title="Sign Message"
+          onPress={() =>
+            signMessage(session as string, sharedSecret as Uint8Array)
+          }
+        />
       </View>
     </View>
   );

@@ -94,6 +94,10 @@ export default function RootLayout() {
     setDeepLink(url);
   };
 
+  useEffect(() => {
+    console.log(isConnected)
+  }, [isConnected]);
+
   // handle inbounds links
   useEffect(() => {
     if (!deepLink) return;
@@ -123,9 +127,11 @@ export default function RootLayout() {
         connectData.session,
         new PublicKey(connectData.public_key)
       );
-      console.log(JSON.stringify(connectData, null, 2));
+      setIsConnected(true);
+      console.log("onConnect: ", JSON.stringify(connectData, null, 2));
     } else if (/onDisconnect/.test(url.pathname)) {
       logout();
+      setIsConnected(false);
       console.log("Disconnected!");
     } else if (/onSignAndSendTransaction/.test(url.pathname)) {
       const signAndSendTransactionData = decryptPayload(
@@ -134,7 +140,7 @@ export default function RootLayout() {
         sharedSecret
       );
 
-      console.log(JSON.stringify(signAndSendTransactionData, null, 2));
+      console.log("onSignAndSendTransaction: ",JSON.stringify(signAndSendTransactionData, null, 2));
     } else if (/onSignAllTransactions/.test(url.pathname)) {
       const signAllTransactionsData = decryptPayload(
         params.get("data")!,
@@ -146,7 +152,7 @@ export default function RootLayout() {
         (t: string) => Transaction.from(bs58.decode(t))
       );
 
-      console.log(JSON.stringify(decodedTransactions, null, 2));
+      console.log("onSignAllTransactions: ", JSON.stringify(decodedTransactions, null, 2));
     } else if (/onSignTransaction/.test(url.pathname)) {
       const signTransactionData = decryptPayload(
         params.get("data")!,
@@ -158,7 +164,7 @@ export default function RootLayout() {
         bs58.decode(signTransactionData.transaction)
       );
 
-      console.log(JSON.stringify(decodedTransaction, null, 2));
+      console.log("onSignTransaction: ", JSON.stringify(decodedTransaction, null, 2));
     } else if (/onSignMessage/.test(url.pathname)) {
       const signMessageData = decryptPayload(
         params.get("data")!,
@@ -166,7 +172,7 @@ export default function RootLayout() {
         sharedSecret
       );
 
-      console.log(JSON.stringify(signMessageData, null, 2));
+      console.log("onSignMessage: ", JSON.stringify(signMessageData, null, 2));
     }
   }, [deepLink]);
 

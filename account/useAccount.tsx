@@ -1,7 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
 import { useContext } from "react";
-import nacl from "tweetnacl";
-import WalletContext from "./AccountContext";
+import AccountContext from "./AccountContext";
 
 const useAccount = () => {
   const {
@@ -15,7 +14,7 @@ const useAccount = () => {
     setSharedSecret,
     setPhantomWalletPublicKey,
     setIsConnected,
-  } = useContext(WalletContext);
+  } = useContext(AccountContext);
 
   const login = (
     sharedSecretDapp: Uint8Array,
@@ -26,6 +25,7 @@ const useAccount = () => {
     setSession(session);
     setPhantomWalletPublicKey(publicKey);
     setIsConnected(true);
+    console.log(session, sharedSecret, phantomWalletPublicKey, isConnected);
   };
 
   const logout = () => {

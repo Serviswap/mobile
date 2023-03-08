@@ -1,7 +1,10 @@
+import "react-native-get-random-values";
+import "react-native-url-polyfill/auto";
 import bs58 from "bs58";
 import {
   clusterApiUrl,
   Connection,
+  PublicKey,
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
@@ -38,13 +41,10 @@ const encryptPayload = (payload: any, sharedSecret?: Uint8Array) => {
   return [nonce, encryptedPayload];
 };
 
-const { session, sharedSecret, phantomWalletPublicKey } =
-  useAccount();
-
 const NETWORK = clusterApiUrl("mainnet-beta");
 const connection = new Connection(NETWORK);
 
-const createTransferTransaction = async () => {
+const createTransferTransaction = async (phantomWalletPublicKey: PublicKey) => {
   if (!phantomWalletPublicKey) throw new Error("missing public key from user");
   let transaction = new Transaction().add(
     SystemProgram.transfer({
@@ -80,7 +80,7 @@ const connect = async () => {
   }
 };
 
-const disconnect = async () => {
+const disconnect = async (session: string, sharedSecret: Uint8Array) => {
   try {
     const dappKeyPair = await dappKeyPairStorage.getKey();
     const payload = {
@@ -102,10 +102,14 @@ const disconnect = async () => {
   }
 };
 
-const signAndSendTransaction = async () => {
+const signAndSendTransaction = async (
+  phantomWalletPublicKey: PublicKey,
+  session: string,
+  sharedSecret: Uint8Array
+) => {
   try {
     const dappKeyPair = await dappKeyPairStorage.getKey();
-    const transaction = await createTransferTransaction();
+    const transaction = await createTransferTransaction(phantomWalletPublicKey);
 
     const serializedTransaction = transaction.serialize({
       requireAllSignatures: false,
@@ -132,12 +136,16 @@ const signAndSendTransaction = async () => {
   }
 };
 
-const signAllTransactions = async () => {
+const signAllTransactions = async (
+  phantomWalletPublicKey: PublicKey,
+  session: string,
+  sharedSecret: Uint8Array
+) => {
   try {
     const dappKeyPair = await dappKeyPairStorage.getKey();
     const transactions = await Promise.all([
-      createTransferTransaction(),
-      createTransferTransaction(),
+      createTransferTransaction(phantomWalletPublicKey),
+      createTransferTransaction(phantomWalletPublicKey),
     ]);
 
     const serializedTransactions = transactions.map((t) =>
@@ -170,10 +178,14 @@ const signAllTransactions = async () => {
   }
 };
 
-const signTransaction = async () => {
+const signTransaction = async (
+  phantomWalletPublicKey: PublicKey,
+  session: string,
+  sharedSecret: Uint8Array
+) => {
   try {
     const dappKeyPair = await dappKeyPairStorage.getKey();
-    const transaction = await createTransferTransaction();
+    const transaction = await createTransferTransaction(phantomWalletPublicKey);
 
     const serializedTransaction = bs58.encode(
       transaction.serialize({
@@ -203,7 +215,7 @@ const signTransaction = async () => {
   }
 };
 
-const signMessage = async () => {
+const signMessage = async (session: string, sharedSecret: Uint8Array) => {
   try {
     const dappKeyPair = await dappKeyPairStorage.getKey();
     const message =
