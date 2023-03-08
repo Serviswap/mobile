@@ -25,7 +25,6 @@ const useAccount = () => {
     setSession(session);
     setPhantomWalletPublicKey(publicKey);
     setIsConnected(true);
-    console.log(session, sharedSecret, phantomWalletPublicKey, isConnected);
   };
 
   const logout = () => {

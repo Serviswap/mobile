@@ -35,6 +35,7 @@ const initialState: Account = {
     phantomWalletPublicKey = phantomWalletPublicKey;
   },
   setIsConnected: (isConnected: boolean) => {
+    console.log("bruh")
     isConnected = isConnected;
   },
 };
