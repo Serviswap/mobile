@@ -5,11 +5,12 @@ import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import walletApi from "../api/wallet";
 import { PublicKey } from "@solana/web3.js";
-import ExploreHeader from "../components/ExploreHeader";
+import ExploreHeader from "../components/Explore/ExploreHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
-import PostEditButton from "../components/PostEditButton";
+import PostEditButton from "../components/Explore/PostEditButton";
+import { useNavigation } from "expo-router";
 
-export default function ExploreScreen({ navigation }: { navigation: any }) {
+export default function ExploreScreen() {
   const { phantomWalletPublicKey, session, sharedSecret, logout } =
     useAccount();
   const {
@@ -18,6 +19,8 @@ export default function ExploreScreen({ navigation }: { navigation: any }) {
     signTransaction,
     signMessage,
   } = walletApi;
+
+  const navigation = useNavigation() as any;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,7 +84,7 @@ export default function ExploreScreen({ navigation }: { navigation: any }) {
           textStyle={{}}
         />
       </View>
-      <PostEditButton onPress={() => {}} />
+      <PostEditButton onPress={() => navigation.navigate("PostDetail")} />
     </SafeAreaView>
   );
 }

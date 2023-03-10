@@ -21,7 +21,7 @@ function ExploreHeader({ navigation }: { navigation: any }) {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../assets/exploreClouds.png")}
+        source={require("../../assets/exploreClouds.png")}
         style={styles.clouds}
       />
       <Text style={styles.header}>TOWN OF BERKELEY</Text>
@@ -29,12 +29,12 @@ function ExploreHeader({ navigation }: { navigation: any }) {
         <TouchableWithoutFeedback onPress={() => navigation.navigate("Wallet")}>
           <View style={styles.walletButton}>
             <Image
-              source={require("../assets/token2.png")}
+              source={require("../../assets/token.png")}
               style={styles.token}
             />
             <Text style={styles.num}>{wikiCount}</Text>
             <Image
-              source={require("../assets/wallet3.png")}
+              source={require("../../assets/wallet.png")}
               style={styles.walletImage}
             />
           </View>
