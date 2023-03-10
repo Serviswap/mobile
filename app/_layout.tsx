@@ -15,7 +15,7 @@ import { useColorScheme } from "react-native";
 import nacl from "tweetnacl";
 import { PublicKey } from "@solana/web3.js";
 import AccountContext from "../account/AccountContext";
-import dappKeyPairStorage from "../auth/dappKeyPairStorage";
+import keyStorage from "../storage/keyStorage";
 import WalletConnect from "./WalletConnect";
 
 export {
@@ -37,7 +37,9 @@ export default function RootLayout() {
   // store dappKeyPair, sharedSecret, session and account SECURELY on device
   // to avoid having to reconnect users.
   const [address, setAddress] = useState<string>("");
-  const [dappKeyPair] = useState(nacl.box.keyPair());
+  const [dappKeyPair, setDappKeyPair] = useState<nacl.BoxKeyPair | undefined>(
+    nacl.box.keyPair()
+  );
   const [sharedSecret, setSharedSecret] = useState<Uint8Array>();
   const [session, setSession] = useState<string>();
   const [phantomWalletPublicKey, setPhantomWalletPublicKey] =
@@ -45,7 +47,7 @@ export default function RootLayout() {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    dappKeyPairStorage.storeKey(dappKeyPair);
+    keyStorage.storeDappKeyPair(dappKeyPair!);
   }, []);
 
   return (
@@ -54,13 +56,15 @@ export default function RootLayout() {
         address,
         session,
         sharedSecret,
+        dappKeyPair,
         phantomWalletPublicKey,
         isConnected,
         setAddress,
         setSession,
         setSharedSecret,
+        setDappKeyPair,
         setPhantomWalletPublicKey,
-        setIsConnected: setIsConnected,
+        setIsConnected,
       }}
     >
       {loaded ? (

@@ -1,17 +1,20 @@
 import { PublicKey } from "@solana/web3.js";
 import { useContext } from "react";
 import AccountContext from "./AccountContext";
+import keyStorage from "../storage/keyStorage";
 
 const useAccount = () => {
   const {
     address,
     session,
     sharedSecret,
+    dappKeyPair,
     phantomWalletPublicKey,
     isConnected,
     setAddress,
     setSession,
     setSharedSecret,
+    setDappKeyPair,
     setPhantomWalletPublicKey,
     setIsConnected,
   } = useContext(AccountContext);
@@ -21,6 +24,9 @@ const useAccount = () => {
     session: string,
     publicKey: PublicKey
   ) => {
+    keyStorage.storeSharedSecret(sharedSecretDapp);
+    keyStorage.storeSession(session);
+    keyStorage.storePhantomWalletPublicKey(publicKey);
     setSharedSecret(sharedSecretDapp);
     setSession(session);
     setPhantomWalletPublicKey(publicKey);
@@ -28,6 +34,7 @@ const useAccount = () => {
   };
 
   const logout = () => {
+    keyStorage.resetStorage()
     setAddress("");
     setSession("");
     setSharedSecret(undefined);
@@ -39,8 +46,10 @@ const useAccount = () => {
     address,
     session,
     sharedSecret,
+    dappKeyPair,
     phantomWalletPublicKey,
     isConnected,
+    setDappKeyPair,
     logout,
     login,
   };

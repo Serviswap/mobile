@@ -11,7 +11,7 @@ import {
 import * as Linking from "expo-linking";
 import nacl from "tweetnacl";
 import useAccount from "../account/useAccount";
-import dappKeyPairStorage from "../auth/dappKeyPairStorage";
+import dappKeyPairStorage from "../storage/keyStorage";
 
 const onConnectRedirectLink = Linking.createURL("onConnect");
 const onDisconnectRedirectLink = Linking.createURL("onDisconnect");
@@ -64,7 +64,7 @@ const createTransferTransaction = async (phantomWalletPublicKey: PublicKey) => {
 
 const connect = async () => {
   try {
-    const dappKeyPair = await dappKeyPairStorage.getKey();
+    const dappKeyPair = await dappKeyPairStorage.getDappKeyPair();
     const params = new URLSearchParams({
       dapp_encryption_public_key: bs58.encode(dappKeyPair!.publicKey),
       cluster: "mainnet-beta",
@@ -82,7 +82,7 @@ const connect = async () => {
 
 const disconnect = async (session: string, sharedSecret: Uint8Array) => {
   try {
-    const dappKeyPair = await dappKeyPairStorage.getKey();
+    const dappKeyPair = await dappKeyPairStorage.getDappKeyPair();
     const payload = {
       session,
     };
@@ -108,7 +108,7 @@ const signAndSendTransaction = async (
   sharedSecret: Uint8Array
 ) => {
   try {
-    const dappKeyPair = await dappKeyPairStorage.getKey();
+    const dappKeyPair = await dappKeyPairStorage.getDappKeyPair();
     const transaction = await createTransferTransaction(phantomWalletPublicKey);
 
     const serializedTransaction = transaction.serialize({
@@ -142,7 +142,7 @@ const signAllTransactions = async (
   sharedSecret: Uint8Array
 ) => {
   try {
-    const dappKeyPair = await dappKeyPairStorage.getKey();
+    const dappKeyPair = await dappKeyPairStorage.getDappKeyPair();
     const transactions = await Promise.all([
       createTransferTransaction(phantomWalletPublicKey),
       createTransferTransaction(phantomWalletPublicKey),
@@ -184,7 +184,7 @@ const signTransaction = async (
   sharedSecret: Uint8Array
 ) => {
   try {
-    const dappKeyPair = await dappKeyPairStorage.getKey();
+    const dappKeyPair = await dappKeyPairStorage.getDappKeyPair();
     const transaction = await createTransferTransaction(phantomWalletPublicKey);
 
     const serializedTransaction = bs58.encode(
@@ -217,7 +217,7 @@ const signTransaction = async (
 
 const signMessage = async (session: string, sharedSecret: Uint8Array) => {
   try {
-    const dappKeyPair = await dappKeyPairStorage.getKey();
+    const dappKeyPair = await dappKeyPairStorage.getDappKeyPair();
     const message =
       "To avoid digital dognappers, sign below to authenticate with CryptoCorgis.";
 

@@ -3,15 +3,8 @@ import "react-native-url-polyfill/auto";
 import { Buffer } from "buffer";
 global.Buffer = global.Buffer || Buffer;
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
-import { useColorScheme } from "react-native";
+import React, { useEffect, useState } from "react";
 import { Button, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as Linking from "expo-linking";
@@ -20,9 +13,7 @@ import bs58 from "bs58";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import useAccount from "../account/useAccount";
 import walletApi from "../api/wallet";
-import AccountContext from "../account/AccountContext";
-import Btn from "../components/Btn";
-import dappKeyPairStorage from "../auth/dappKeyPairStorage";
+import keyStorage from "../storage/keyStorage";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -63,15 +54,12 @@ export default function WalletConnect() {
     if (error) throw error;
   }, [error]);
 
-  const { login, logout, sharedSecret } = useAccount();
+  const { login, logout, sharedSecret, dappKeyPair } = useAccount();
   const { connect } = walletApi;
   const [deepLink, setDeepLink] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   // store dappKeyPair, sharedSecret, session and account SECURELY on device
   // to avoid having to reconnect users.
-  const [dappKeyPair, setDappKeyPair] = useState<nacl.BoxKeyPair | undefined>(
-    undefined
-  );
 
   useEffect(() => {
     (async () => {
@@ -79,9 +67,12 @@ export default function WalletConnect() {
       if (initialUrl) {
         setDeepLink(initialUrl);
       }
-      const dappKeyPair = await dappKeyPairStorage.getKey();
-      if (dappKeyPair) {
-        setDappKeyPair(dappKeyPair);
+      const phantomWalletPublicKey =
+        await keyStorage.getPhantomWalletPublicKey();
+      const session = await keyStorage.getSession();
+      const sharedSecret = await keyStorage.getSharedSecret();
+      if (phantomWalletPublicKey && session && sharedSecret) {
+        login(sharedSecret, session, phantomWalletPublicKey);
       }
     })();
     const subscription = Linking.addEventListener("url", handleDeepLink);
@@ -127,7 +118,6 @@ export default function WalletConnect() {
       );
       console.log("onConnect: ", JSON.stringify(connectData, null, 2));
     } else if (/onDisconnect/.test(url.pathname)) {
-      console.log("bruh");
       logout();
       console.log("Disconnected!");
     } else if (/onSignAndSendTransaction/.test(url.pathname)) {
