@@ -14,6 +14,16 @@ import { PublicKey, Transaction } from "@solana/web3.js";
 import useAccount from "../account/useAccount";
 import walletApi from "../api/wallet";
 import keyStorage from "../storage/keyStorage";
+import {
+  StyleSheet,
+  SafeAreaView,
+  TouchableWithoutFeedback,
+  ImageBackground,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+} from "react-native";
+import AppButton from "../components/AppButton";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -22,7 +32,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
+  initialRouteName: "Explore",
 };
 
 const decryptPayload = (
@@ -172,13 +182,51 @@ export default function WalletConnect() {
     }
   }, [deepLink]);
 
+  const window = Dimensions.get("window");
+
   return (
-    <View style={{ flex: 1, backgroundColor: "#333" }}>
-      <StatusBar style="light" />
-      <View style={{ flex: 0, paddingTop: 20, paddingBottom: 40 }}>
-        <View style={{ flex: 0, paddingTop: 20, paddingBottom: 40 }} />
-        <Button title="Connect" onPress={connect} />
-      </View>
-    </View>
+    <ImageBackground
+      source={require("./../assets/login/Login.png")}
+      style={styles.backgroundImage}
+    >
+      <KeyboardAvoidingView behavior="padding">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
+          <TouchableWithoutFeedback>
+            <SafeAreaView style={styles.container}>
+              <View style={{ marginTop: window.height * 0.4 }}>
+                <View
+                  style={{ flexDirection: "row", justifyContent: "center" }}
+                >
+                  <AppButton
+                    style={styles.connectButton}
+                    name="Connect Wallet"
+                    onPress={connect}
+                    textStyle={{}}
+                  />
+                </View>
+              </View>
+            </SafeAreaView>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    alignItems: "center",
+    flex: 1,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover",
+  },
+  connectButton: {
+    width: 200,
+  },
+});
