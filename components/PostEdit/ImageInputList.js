@@ -18,12 +18,13 @@ function changeCount(increment, img, func) {
 function ImageInputList({ imageUris = [], addImage, removeImage }) {
   const scrollview = useRef();
   postCount = imageUris.length;
+  const maxPostCount = 1;
 
   return (
     <View style={styles.background}>
       <View style={styles.countContainer}>
         <Text style={styles.currentCount}>{postCount}</Text>
-        <Text style={styles.totalCount}>/9</Text>
+        <Text style={styles.totalCount}>/{maxPostCount}</Text>
       </View>
       <View style={styles.scrollViewContainer}>
         <ScrollView
@@ -38,14 +39,14 @@ function ImageInputList({ imageUris = [], addImage, removeImage }) {
                 <ImageInput
                   imageUri={uri}
                   changeImage={() => changeCount(false, uri, removeImage)}
-                  selectionLimit={9 - postCount}
+                  selectionLimit={maxPostCount - postCount}
                 />
               </View>
             ))}
-            {postCount < 9 ? (
+            {postCount < maxPostCount ? (
               <ImageInput
                 changeImage={(uri) => changeCount(true, uri, addImage)}
-                selectionLimit={9 - postCount}
+                selectionLimit={maxPostCount - postCount}
               />
             ) : null}
           </View>

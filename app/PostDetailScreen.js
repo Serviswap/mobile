@@ -23,8 +23,6 @@ import UploadScreen from "../components/PostEdit/UploadScreen";
 import CategoryPicker from "../components/PostEdit/CategoryPicker";
 import { useNavigation } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import walletApi from "../api/wallet";
-import useAccount from "../account/useAccount";
 
 const categories = [
   { label: "Food", value: 1, backGroundColor: "red" },
@@ -48,20 +46,14 @@ function PostDetailScreen() {
   const [uploadVisible, setUploadVisible] = useState(false);
   const [questionChecked, setQuestionChecked] = useState(false);
   const navigation = useNavigation();
-  const { phantomWalletPublicKey } = useAccount();
 
   useEffect(() => {
     navigation.getParent()?.setOptions({ tabBarStyle: { display: "none" } });
     return () => navigation.getParent()?.setOptions({ tabBarStyle: undefined });
   }, [navigation]);
 
-  const handleSubmit = async (post, { resetForm }) => {
-    const newPost = {
-      walletAddress: phantomWalletPublicKey,
-      ...post,
-    };
-    await walletApi.mint(newPost);
-    resetForm();
+  const handleSubmit = async () => {
+    // mint
   };
 
   return (
@@ -159,7 +151,6 @@ const window = Dimensions.get("window");
 const styles = StyleSheet.create({
   background: {
     backgroundColor: "white",
-    flex: 1,
   },
   postInfo: {
     marginTop: 10,

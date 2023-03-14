@@ -10,8 +10,9 @@ import {
 } from "@solana/web3.js";
 import * as Linking from "expo-linking";
 import nacl from "tweetnacl";
-import useAccount from "../account/useAccount";
 import dappKeyPairStorage from "../storage/keyStorage";
+import baseUrl from "./baseUrl";
+import axios from "axios";
 
 const onConnectRedirectLink = Linking.createURL("onConnect");
 const onDisconnectRedirectLink = Linking.createURL("onDisconnect");
@@ -243,6 +244,34 @@ const signMessage = async (session: string, sharedSecret: Uint8Array) => {
   }
 };
 
+const mint = async (post: any) => {
+  // const bruh = await dappKeyPairStorage.getPhantomWalletPublicKey();
+  const formData = new FormData();
+  formData.append("walletAddress", post.walletAddress);
+  post.images.forEach((image: string, index: number) => {
+    formData.append("images", {
+      name: "image" + index,
+      type: "image/jpeg",
+      uri: image,
+    } as any);
+  });
+  const bruh = await axios({
+    method: "get",
+    url: `${baseUrl}health`,
+  });
+console.log(bruh)
+  try {
+    const response = await axios({
+      method: "post",
+      url: `${baseUrl}tokens/upload-images`,
+      data: formData,
+    });
+    return response.data;
+  } catch (error) {
+    console.log("error: ", error);
+  }
+};
+
 export default {
   connect,
   disconnect,
@@ -250,4 +279,5 @@ export default {
   signAndSendTransaction,
   signMessage,
   signTransaction,
+  mint,
 };

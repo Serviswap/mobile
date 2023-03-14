@@ -17,7 +17,8 @@ function ImageInput({ imageUri, changeImage, selectionLimit }) {
   }, []);
 
   const requestPermission = async () => {
-    const { granted } = await ExpoImagePicker.requestMediaLibraryPermissionsAsync();
+    const { granted } =
+      await ExpoImagePicker.requestMediaLibraryPermissionsAsync();
     if (!granted) alert("You need to enable permission to access the photo.");
     else {
       return;
@@ -34,8 +35,8 @@ function ImageInput({ imageUri, changeImage, selectionLimit }) {
           selectionLimit: selectionLimit,
         });
 
-        if (!result.cancelled) {
-          manipulated = await Promise.all(result.selected.map(async imageResult => 
+        if (!result.canceled) {
+          manipulated = await Promise.all(result.assets.map(async imageResult =>
             await manipulateAsync(
               imageResult.uri,
               [{ rotate: 360 }],
